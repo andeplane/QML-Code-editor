@@ -24,6 +24,8 @@ Item {
             lineNumbers.scrollY = flickableItem.contentY
             lineNumbers.lineHeight = lineHeight
             lineNumbers.cursorPosition = cursorPosition
+            lineNumbers.selectionStart = selectionStart
+            lineNumbers.selectionEnd = selectionEnd
             lineNumbers.text = text
             lineNumbers.update()
 
@@ -33,6 +35,11 @@ Item {
             flickableItem.contentYChanged.connect(update)
             update()
         }
+        onSelectedTextChanged: {
+            console.log("selectionStart: ", selectionStart)
+            console.log("selectionEnd: ", selectionEnd)
+        }
+
         onLineCountChanged: update()
         onHeightChanged: update()
         onCursorPositionChanged: update()

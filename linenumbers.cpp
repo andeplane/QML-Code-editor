@@ -63,10 +63,35 @@ void LineNumbers::setCursorPosition(int cursorPosition)
         emit cursorPositionChanged(cursorPosition);
 }
 
+void LineNumbers::setSelectionStart(int selectionStart)
+{
+    if (m_selectionStart == selectionStart)
+            return;
+
+        m_selectionStart = selectionStart;
+        emit selectionStartChanged(selectionStart);
+}
+
+void LineNumbers::setSelectionEnd(int selectionEnd)
+{
+    if (m_selectionEnd == selectionEnd)
+            return;
+
+        m_selectionEnd = selectionEnd;
+        emit selectionEndChanged(selectionEnd);
+}
+
 
 void LineNumbers::paint(QPainter *painter)
 {
     // Find current line
+    QString untilSelectedText = m_text.mid(0, selectionStart());
+    int selectedTextStartLine = untilSelectedText.count(QRegExp("[\r\n]"))+1;
+
+    QString selectedText = m_text.mid(selectionStart(), (selectionEnd() - selectionStart()));
+    int numLinesSelected = selectedText.count(QRegExp("[\r\n]"))+1;
+
+    qDebug() << "Num lines selected: " << numLinesSelected;
     QString textUntilCursorPosition = m_text.mid(0, m_cursorPosition);
     int cursorLine = textUntilCursorPosition.count(QRegExp("[\r\n]"))+1;
 
@@ -91,12 +116,19 @@ void LineNumbers::paint(QPainter *painter)
         float y = 5 + i*m_lineHeight - rest;
         QRectF textRect(x,y,textWidth,textHeight);
 
+        if(lineNumber >= selectedTextStartLine && lineNumber < selectedTextStartLine+numLinesSelected) {
+            QRectF selectedTextRect(0,y,width(),textHeight);
+            painter->setPen(QColor("#b2d7ff"));
+            painter->drawRect(selectedTextRect);
+            painter->fillRect(selectedTextRect, QColor("#b2d7ff"));
+        }
         if(lineNumber == cursorLine) {
             QRectF selectedTextRect(0,y,width(),textHeight);
             painter->setPen(Qt::lightGray);
             painter->drawRect(selectedTextRect);
             painter->fillRect(selectedTextRect, Qt::lightGray);
         }
+
         painter->setPen(Qt::black);
         painter->drawText(textRect, text);
 
@@ -111,6 +143,16 @@ QString LineNumbers::text() const
 int LineNumbers::cursorPosition() const
 {
     return m_cursorPosition;
+}
+
+int LineNumbers::selectionStart() const
+{
+    return m_selectionStart;
+}
+
+int LineNumbers::selectionEnd() const
+{
+    return m_selectionEnd;
 }
 
 float LineNumbers::lineHeight() const
