@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>CodeEditor.qml</file>
+    </qresource>
+</RCC>
