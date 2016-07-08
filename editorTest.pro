@@ -3,7 +3,8 @@ QT += qml quick widgets
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    linenumbers.cpp
+    linenumbers.cpp \
+    codeeditorbackend.cpp
 
 RESOURCES += qml.qrc
 
@@ -14,4 +15,5 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    linenumbers.h
+    linenumbers.h \
+    codeeditorbackend.h

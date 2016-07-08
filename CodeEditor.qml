@@ -1,15 +1,47 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.5
-import LineNumbers 1.0
+import QtQuick.Dialogs 1.2
+import CodeEditor 1.0
 
 Item {
+    id: root
     property alias text: textArea.text
+    property string title: changedSinceLastSave ? fileName+"*" : fileName
+    property alias fileName: backend.fileName
+    property bool changedSinceLastSave: false
+    function save() {
+        backend.text = textArea.text
+        if(fileName === "untitled") {
+            fileDialogSave.cb = function() {
+                save()
+                fileDialogSave.cb = undefined
+            }
+            fileDialogSave.visible = true
+        } else {
+            if(backend.save()) {
+                changedSinceLastSave = false
+            }
+        }
+    }
 
+    function saveAs() {
+        backend.text = textArea.text
+        fileDialogSave.cb = function() {
+            save()
+            fileDialogSave.cb = undefined
+        }
+        fileDialogSave.visible = true
+    }
 
     LineNumbers {
         id: lineNumbers
         height: parent.height
         width: 40
+    }
+
+    CodeEditorBackend {
+        id: backend
+        fileName: "untitled"
     }
 
     TextArea {
@@ -28,20 +60,34 @@ Item {
             lineNumbers.selectionEnd = selectionEnd
             lineNumbers.text = text
             lineNumbers.update()
-
         }
 
         Component.onCompleted: {
             flickableItem.contentYChanged.connect(update)
             update()
         }
-        onSelectedTextChanged: {
-            console.log("selectionStart: ", selectionStart)
-            console.log("selectionEnd: ", selectionEnd)
+
+        onTextChanged: {
+            console.log("Changed text...title: ", root.title)
+            changedSinceLastSave = true
         }
 
         onLineCountChanged: update()
         onHeightChanged: update()
         onCursorPositionChanged: update()
+    }
+
+    FileDialog {
+        id: fileDialogSave
+        selectExisting : false
+        property var cb
+        title: "Please choose a location to save"
+
+        onAccepted: {
+            backend.fileUrl = fileDialogSave.fileUrl
+            if(cb != undefined) {
+                cb()
+            }
+        }
     }
 }

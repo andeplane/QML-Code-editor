@@ -91,11 +91,8 @@ void LineNumbers::paint(QPainter *painter)
     QString selectedText = m_text.mid(selectionStart(), (selectionEnd() - selectionStart()));
     int numLinesSelected = selectedText.count(QRegExp("[\r\n]"))+1;
 
-    qDebug() << "Num lines selected: " << numLinesSelected;
     QString textUntilCursorPosition = m_text.mid(0, m_cursorPosition);
     int cursorLine = textUntilCursorPosition.count(QRegExp("[\r\n]"))+1;
-
-    qDebug() << "Cursor on line " << cursorLine;
 
     int firstLineVisible = m_scrollY / m_lineHeight;
     int lineHeight = int(round(m_lineHeight));
@@ -103,8 +100,6 @@ void LineNumbers::paint(QPainter *painter)
     // The last visible line is either the last line in the textfield or if we have scrolled as far as we get with current size
     int lastLineVisible = std::min(firstLineVisible+int(height() / m_lineHeight)+1, m_lineCount);
     int numLines = lastLineVisible - firstLineVisible;
-//    qDebug() << "Start line: " << firstLineVisible << " and end line: " << lastLineVisible << " and rest: " << rest;
-//    qDebug() << "Line height: " << lineHeight;
     for(int i=0; i<numLines; i++) {
         int lineNumber = i+firstLineVisible+1;
         QFont font("times", 24);

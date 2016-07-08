@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>CodeEditor.qml</file>
+        <file>CodeEditorTabButton.qml</file>
     </qresource>
 </RCC>
