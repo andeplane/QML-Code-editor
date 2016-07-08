@@ -9,6 +9,12 @@ Item {
     property string title: changedSinceLastSave ? fileName+"*" : fileName
     property alias fileName: backend.fileName
     property bool changedSinceLastSave: false
+
+    function open(fileUrl) {
+        backend.fileUrl = fileUrl
+        backend.load()
+    }
+
     function save() {
         backend.text = textArea.text
         if(fileName === "untitled") {
@@ -82,6 +88,20 @@ Item {
         selectExisting : false
         property var cb
         title: "Please choose a location to save"
+
+        onAccepted: {
+            backend.fileUrl = fileDialogSave.fileUrl
+            if(cb != undefined) {
+                cb()
+            }
+        }
+    }
+
+    FileDialog {
+        id: fileDialogLoad
+        selectExisting : true
+        property var cb
+        title: "Please choose a file"
 
         onAccepted: {
             backend.fileUrl = fileDialogSave.fileUrl

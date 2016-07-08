@@ -4,9 +4,9 @@ import QtQuick.Controls 2.0
 TabButton {
     id: root
     property CodeEditor codeEditor
-    height: parent.height
+    height: parent ? parent.height : 0
     onCodeEditorChanged: {
-
+        if(codeEditor === undefined || codeEditor === null) return
         if(codeEditor != undefined) {
             text = codeEditor.title
         }
@@ -23,20 +23,9 @@ TabButton {
         width: parent.width
         height: parent.height
         opacity: enabled ? 1 : 0.3
-        color: root.focus ? "#fff" : "#ccc"
+        color: root.focus ? "#fff" : "#aaa"
     }
 
-//    Timer {
-//        interval: 1000
-//        repeat: true
-//        running: true
-//        onTriggered: {
-//            console.log("Background: ", background)
-//            console.log("Background color: ", background.color)
-//        }
-//    }
-
-//    implicitWidth: contentItem.implicitWidth + leftPadding + rightPadding // This fixes that text is "myfil..." when changed
-//    width: implicitWidth
-    width: parent.width / parent.count
+    implicitWidth: width
+    width: parent ? parent.width / parent.count : 0
 }
