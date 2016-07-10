@@ -6,6 +6,7 @@ import CodeEditor 1.0
 Item {
     id: root
     property alias text: textArea.text
+    property alias textArea: textArea
     property string title: changedSinceLastSave ? fileName+"*" : fileName
     property alias fileName: backend.fileName
     property bool changedSinceLastSave: false
@@ -61,6 +62,7 @@ Item {
         height: parent.height
         width: parent.width-lineNumbers.width
         anchors.left: lineNumbers.right
+        wrapMode: TextEdit.NoWrap
 
         function update() {
             var lineHeight = 16;//(contentHeight-8) / lineCount

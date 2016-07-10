@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>CodeEditor.qml</file>
         <file>CodeEditorTabButton.qml</file>
+        <file>CodeEditorWindow.qml</file>
     </qresource>
 </RCC>
