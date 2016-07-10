@@ -67,7 +67,8 @@ bool CodeEditorBackend::load()
         return false;
     }
     QByteArray content = file.readAll();
-    QString::fromUtf8(content.constData(), content.length());
+    setText(QString::fromUtf8(content.constData(), content.length()));
+
     file.close();
     return true;
 }

@@ -21,13 +21,36 @@ ApplicationWindow {
         newCodeEditor.changedSinceLastSave = false
     }
 
+    function showDoYouWantToSave(fileName) {
+        messageDialog.text = "Do you want to save the changes you made to "+fileName+"?"
+        messageDialog.visible = true
+    }
+
     function closeTab() {
-        var indexOfCurrentTab = stackLayout.currentIndex
-        var editor = currentEditor
-        currentTabButton.codeEditor = null
-        currentEditor.parent = null
-        editor.destroy()
-        tabBar.removeItem(indexOfCurrentTab)
+        if(currentEditor.changedSinceLastSave) {
+            // Ask user to save the file before we close the tab
+
+            messageDialog.cb = function() {
+                // Callback is to close the tab
+                var indexOfCurrentTab = stackLayout.currentIndex
+                var editor = currentEditor
+                currentTabButton.codeEditor = null
+                currentEditor.parent = null
+                editor.destroy()
+                tabBar.removeItem(indexOfCurrentTab)
+                messageDialog.cb = null
+            }
+
+            showDoYouWantToSave(currentEditor.fileName)
+        } else {
+            var indexOfCurrentTab = stackLayout.currentIndex
+            var editor = currentEditor
+            currentTabButton.codeEditor = null
+            currentEditor.parent = null
+            editor.destroy()
+            tabBar.removeItem(indexOfCurrentTab)
+            messageDialog.cb = null
+        }
     }
 
     function openTab() {
@@ -91,6 +114,28 @@ ApplicationWindow {
         onAccepted: {
             cb()
             cb = undefined
+        }
+    }
+
+    MessageDialog {
+        id: messageDialog
+        property var cb
+        title: "Save Changes"
+        text: "Do you want to save the changes you made to "
+        standardButtons: StandardButton.Save  | StandardButton.Discard | StandardButton.Cancel
+        onAccepted: {
+            currentEditor.save(function() {
+                console.log("Save dialog callback and cancel: ", currentEditor.cancelCloseEditor)
+                if(!currentEditor.cancelCloseEditor) {
+                    closeTab()
+                }
+                currentEditor.cancelCloseEditor = false
+            })
+        }
+
+        onDiscard: {
+            currentEditor.changedSinceLastSave = false
+            closeTab()
         }
     }
 

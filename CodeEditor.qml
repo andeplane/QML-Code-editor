@@ -9,23 +9,29 @@ Item {
     property string title: changedSinceLastSave ? fileName+"*" : fileName
     property alias fileName: backend.fileName
     property bool changedSinceLastSave: false
+    property bool isUnsavedFile: true
 
     function open(fileUrl) {
         backend.fileUrl = fileUrl
         backend.load()
+        textArea.text = backend.text
+        isUnsavedFile = false
+        changedSinceLastSave = false
     }
 
-    function save() {
+    function save(cb) {
         backend.text = textArea.text
         if(fileName === "untitled") {
             fileDialogSave.cb = function() {
-                save()
+                save(cb)
                 fileDialogSave.cb = undefined
             }
             fileDialogSave.visible = true
         } else {
             if(backend.save()) {
                 changedSinceLastSave = false
+                isUnsavedFile = false
+                if(cb != undefined) cb()
             }
         }
     }
@@ -74,7 +80,6 @@ Item {
         }
 
         onTextChanged: {
-            console.log("Changed text...title: ", root.title)
             changedSinceLastSave = true
         }
 
@@ -93,6 +98,7 @@ Item {
             backend.fileUrl = fileDialogSave.fileUrl
             if(cb != undefined) {
                 cb()
+                cb = null
             }
         }
     }
@@ -107,7 +113,13 @@ Item {
             backend.fileUrl = fileDialogSave.fileUrl
             if(cb != undefined) {
                 cb()
+                cancelCloseEditor = false
+                cb = null
             }
+        }
+        onRejected: {
+            cancelCloseEditor = true
+            cb = null
         }
     }
 }
